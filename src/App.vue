@@ -1,6 +1,6 @@
 <template>
   <div class="app-layout">
-    <AppSidebar />
+    <AppSidebar v-if="!route.meta.sakrijSidebar" />
     <main class="app-main">
       <router-view />
     </main>
@@ -8,7 +8,10 @@
 </template>
 
 <script setup>
+import { useRoute } from 'vue-router'
 import AppSidebar from '@/components/AppSidebar.vue'
+
+const route = useRoute()
 </script>
 
 <style>

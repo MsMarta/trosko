@@ -1,6 +1,5 @@
 <template>
   <div class="pregled">
-    <h2 class="pregled-naslov">Pregled-{{ store.period }}-trošak</h2>
 
     <BalanceOverview />
 
@@ -26,13 +25,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.pregled-naslov {
-  font-size: 22px;
-  font-weight: 500;
-  color: #c7c7cc;
-  margin-bottom: 20px;
-}
-
 .pregled-grid {
   display: grid;
   grid-template-columns: 280px 1fr;

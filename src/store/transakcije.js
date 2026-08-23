@@ -87,6 +87,44 @@ export const useTransakcijeStore = defineStore('transakcije', () => {
     return { uspjeh: true }
   }
 
+  async function azurirajTransakciju (id, izmjene) {
+  greska.value = null
+
+  const { data, error } = await supabase
+    .from(TABLE)
+    .update(izmjene)
+    .eq('id', id)
+    .select()
+
+  if (error) {
+    greska.value = error.message
+    return { uspjeh: false, error }
+  }
+
+  const indeks = transakcije.value.findIndex((t) => t.id === id)
+  if (indeks !== -1) {
+    transakcije.value[indeks] = data[0]
+  }
+  return { uspjeh: true }
+}
+
+async function obrisiTransakciju (id) {
+  greska.value = null
+
+  const { error } = await supabase
+    .from(TABLE)
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    greska.value = error.message
+    return { uspjeh: false, error }
+  }
+
+  transakcije.value = transakcije.value.filter((t) => t.id !== id)
+  return { uspjeh: true }
+}
+
   function postaviPeriod (novaVrijednost) {
     period.value = novaVrijednost
   }
@@ -102,6 +140,8 @@ export const useTransakcijeStore = defineStore('transakcije', () => {
     stanjeRacuna,
     dohvatiTransakcije,
     dodajTransakciju,
+    azurirajTransakciju,
+    obrisiTransakciju,
     postaviPeriod
   }
 })

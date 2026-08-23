@@ -30,15 +30,16 @@
         required
       >
 
-      <!-- TODO: kad kategorije budu gotove (Supabase tablica "kategorije"),
-           ovo polje zamijeniti s <select> koji dohvaća kategorije prema tipu -->
-      <input
-        v-model="kategorija"
-        type="text"
-        class="form-input"
-        placeholder="HRANA"
-        required
-      >
+           <select v-model="kategorija" class="form-input" required>
+        <option value="" disabled>KATEGORIJA</option>
+        <option
+          v-for="k in kategorijeZaTip"
+          :key="k.id"
+          :value="k.naziv"
+        >
+          {{ k.naziv }}
+        </option>
+      </select>
 
       <input
         v-model="opis"
@@ -64,10 +65,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useTransakcijeStore } from '@/store/transakcije'
+import { useKategorijeStore } from '@/store/kategorije'
 
 const store = useTransakcijeStore()
+const kategorijeStore = useKategorijeStore()
 
 function danasnjiDatum () {
   return new Date().toISOString().slice(0, 10)
@@ -79,11 +82,25 @@ const kategorija = ref('')
 const opis = ref('')
 const datum = ref(danasnjiDatum())
 
+const kategorijeZaTip = computed(() =>
+  tip.value === 'trosak' ? kategorijeStore.kategorijeTroskova : kategorijeStore.kategorijePrihoda
+)
+
+watch(tip, () => {
+  kategorija.value = ''
+})
+
+onMounted(() => {
+  if (kategorijeStore.kategorije.length === 0) {
+    kategorijeStore.dohvatiKategorije()
+  }
+})
+
 async function posaljiFormu () {
   const rezultat = await store.dodajTransakciju({
     tip: tip.value,
     iznos: Number(iznos.value),
-    kategorija: kategorija.value.toUpperCase(),
+    kategorija: kategorija.value,
     opis: opis.value,
     datum: datum.value
   })
