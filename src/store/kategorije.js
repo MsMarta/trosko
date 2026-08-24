@@ -73,6 +73,23 @@ export const useKategorijeStore = defineStore('kategorije', () => {
     return { uspjeh: true }
   }
 
+  async function obrisiKategoriju (id) {
+  greska.value = null
+
+  const { error } = await supabase
+    .from(TABLE)
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    greska.value = error.message
+    return { uspjeh: false, error }
+  }
+
+  kategorije.value = kategorije.value.filter((k) => k.id !== id)
+  return { uspjeh: true }
+}
+
   return {
     kategorije,
     ucitavanje,
@@ -81,6 +98,7 @@ export const useKategorijeStore = defineStore('kategorije', () => {
     kategorijePrihoda,
     dohvatiKategorije,
     dodajKategoriju,
-    azurirajKategoriju
+    azurirajKategoriju,
+    obrisiKategoriju
   }
 })

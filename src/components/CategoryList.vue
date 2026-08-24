@@ -17,12 +17,17 @@
             <button type="button" class="edit-cancel" @click="uredivanjeId = null">ODUSTANI</button>
           </div>
         </template>
-        <template v-else>
+                <template v-else>
           <p class="category-name">{{ kategorija.naziv }}</p>
           <p v-if="kategorija.opis" class="category-opis">{{ kategorija.opis }}</p>
-          <button type="button" class="category-edit" @click="pokreniUredivanje(kategorija)">
-            UREDI
-          </button>
+          <div class="category-actions">
+            <button type="button" class="category-edit" @click="pokreniUredivanje(kategorija)">
+              UREDI
+            </button>
+            <button type="button" class="category-delete" @click="obrisi(kategorija.id)">
+              OBRIŠI
+            </button>
+          </div>
         </template>
       </div>
     </div>
@@ -64,6 +69,13 @@ async function spremiIzmjenu (id) {
 
   if (rezultat.uspjeh) {
     uredivanjeId.value = null
+  }
+}
+
+async function obrisi (id) {
+  const potvrdeno = window.confirm('Sigurno želiš obrisati ovu kategoriju?')
+  if (potvrdeno) {
+    await store.obrisiKategoriju(id)
   }
 }
 </script>
@@ -110,6 +122,11 @@ async function spremiIzmjenu (id) {
   margin: 0 0 8px 0;
 }
 
+.category-actions {
+  display: flex;
+  gap: 12px;
+}
+
 .category-edit {
   background: none;
   border: none;
@@ -117,6 +134,16 @@ async function spremiIzmjenu (id) {
   font-size: 11px;
   font-weight: 600;
   color: #3d4bf5;
+  cursor: pointer;
+}
+
+.category-delete {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #e0403f;
   cursor: pointer;
 }
 
